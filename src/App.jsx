@@ -55,3 +55,7 @@ function App() {
 }
 
 export default App
+
+
+// homework????
+// create two seperate routes for register and login (/register and /login) i.e., add react-router-dom
