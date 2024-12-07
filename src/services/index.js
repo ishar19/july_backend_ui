@@ -19,3 +19,12 @@ export const login = (data) => {
         body: JSON.stringify(data),
     })
 }
+
+export const getJobs = () => {
+    return fetch(`${URL}/job`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+} 
