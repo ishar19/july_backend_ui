@@ -1,13 +1,15 @@
 import { login } from '../services'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 export default function Login() {
     const navigate = useNavigate()
 
-    if (localStorage.getItem('token')) {
-        alert('already logged in')
-        navigate('/home')
-    }
+    useEffect(() => {
+        const token = localStorage.getItem('token')
+        if (token) {
+            navigate('/home')
+        }
+    }, [])
     const [loginformData, setLoginformData] = useState({
         email: '',
         password: '',
@@ -16,7 +18,9 @@ export default function Login() {
         e.preventDefault()
         const res = await login(loginformData)
         if (res.status === 200) {
-            localStorage.setItem('token', res.token)
+            const data = await res.json()
+            console.log(data)
+            localStorage.setItem('token', data.token)
             alert('logged in successfully')
             navigate('/home')
         }
