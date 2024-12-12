@@ -2,7 +2,15 @@ import { useState, useEffect } from 'react'
 import { getJobs } from '../services'
 import { useNavigate } from 'react-router-dom'
 import { deleteJob } from '../services'
+const debouncingTime = 1000
+const debounce = (func, wait) => {
+    let timeout
+    const context = this
+    clearTimeout(timeout)
+    timeout = setTimeout(() => func.call(context, []), wait)
+}
 export default function Home() {
+
     const [jobs, setJobs] = useState([])
     const [loading, setLoading] = useState(true)
     const [limit, setLimit] = useState(10)
@@ -23,8 +31,11 @@ export default function Home() {
         setLoading(false)
     }
     useEffect(() => {
-
-        fetchJobs()
+        // add debouncing
+        debounce(() => {
+            fetchJobs
+        }, debouncingTime)
+        // fetchDebounced()
     }, [limit, offset, search])
     const handleDeleteJob = async (id) => {
         const res = await deleteJob(id)
@@ -80,3 +91,13 @@ export default function Home() {
 
 
 // debouncing
+
+// homework
+// revise call bind and apply
+// read about abort controller
+
+
+// tomorrow 
+// array filters and abort controller
+
+// sat -> doubts, ui code
