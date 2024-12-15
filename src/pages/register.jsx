@@ -1,4 +1,3 @@
-
 import { register } from '../services'
 import { useState } from 'react'
 export default function Register() {
