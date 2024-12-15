@@ -1,75 +1,70 @@
-import { useEffect, useState } from 'react'
+import {useState } from 'react'
+import JobForm from '../components/JobForm'         //import JobForm
 import { createJob } from '../services'
-import { useParams } from 'react-router-dom'
-import { getJobById, updateJob } from '../services'
+
 export default function NewJob() {
-    const [isEdit, setIsEdit] = useState(false)
-    const { id } = useParams()
-    useEffect(() => {
-        if (id) {
-            setIsEdit(true)
-        }
-    }, [id])
     const [jobformData, setJobformData] = useState({
         companyName: '',
+        addLogoUrl: '',
         jobPosition: '',
-        salary: '',
+        monthlySalary: '',
         jobType: '',
+        jobNature: '',
+        location: '',
+        jobDescription: '',
+        aboutCompany: '',
+        skillsRequired: '',
+        information: ''
     })
-    useEffect(() => {
-        if (isEdit && id) {
-            const fetchJob = async () => {
-                const res = await getJobById(id)
-                if (res.status === 200) {
-                    const data = await res.json()
-                    setJobformData(data)
-                }
-                else {
-                    console.log(res)
-                }
-            }
-            fetchJob()
-        }
-    }, [isEdit, id])
+
+    //              function for creating a job
     const handleCreateJob = async (e) => {
-        e.preventDefault()
-        const res = isEdit ? await updateJob(id, jobformData) : await createJob(jobformData)
-        if (res.status === 200) {
-            const data = await res.json()
-            console.log(data)
+        e.preventDefault();                     // Prevent default form submission
+        const res = await createJob(jobformData);  // API call to add a job
+        if(res.status === 200) {                 // If the request is successful
+            const data = await res.json();
+            console.log(data);                   // Log the response data for debugging
             setJobformData({
                 companyName: '',
+                addLogoUrl: '',
                 jobPosition: '',
-                salary: '',
+                monthlySalary: '',
                 jobType: '',
-            })
-            alert(`job ${isEdit ? 'updated' : 'created'} successfully`)
+                jobNature: '',
+                location: '',
+                jobDescription: '',
+                aboutCompany: '',
+                skillsRequired: '',
+                information: ''
+            });                                 // Reset form fields after successful submission
+            alert("Job created successfully");      // Notify user
+        } else if (res.status === 401) {            // If the user is not authenticated
+            alert("Login to create a job");
+        } else {                                    // Handle other errors
+            console.log(res);                       // Log the error response
+            alert("error");
         }
-        else if (res.status === 401) {
-            alert('login to create job')
-        }
-        else {
-            console.log(res)
-            alert('error')
-        }
-    }
+    };
+    //              function for reset the job form
+    const handleReset = () => {
+        setJobformData({
+            companyName: '',
+            addLogoUrl: '',
+            jobPosition: '',
+            monthlySalary: '',
+            jobType: '',
+            jobNature: '',
+            location: '',
+            jobDescription: '',
+            aboutCompany: '',
+            skillsRequired: '',
+            information: ''
+        });                                         // Reset the state to initial values
+    };
     return (
         <div>
             <h1>New Job</h1>
-            <form onSubmit={handleCreateJob}>
-                <input type="text" onChange={(e) => setJobformData({ ...jobformData, [e.target.name]: e.target.value })} value={jobformData.companyName} name="companyName" placeholder="enter company name" />
-                <input type="text" onChange={(e) => setJobformData({ ...jobformData, [e.target.name]: e.target.value })} value={jobformData.jobPosition} name="jobPosition" placeholder="enter job position" />
-                <input type="number" onChange={(e) => setJobformData({ ...jobformData, [e.target.name]: e.target.value })} value={jobformData.salary} name="salary" placeholder="enter salary" />
-                <select onChange={(e) => setJobformData({ ...jobformData, [e.target.name]: e.target.value })} value={jobformData.jobType} name="jobType">
-                    <option value="">select job type</option>
-                    <option value="full-time">full-time</option>
-                    <option value="part-time">part-time</option>
-                    <option value="contract">contract</option>
-                    <option value="internship">internship</option>
-                    <option value="freelance">freelance</option>
-                </select>
-                <button type='submit'>{isEdit ? 'update' : 'create'}</button>
-            </form>
+            <JobForm formData={jobformData} setFormData={setJobformData} onSubmit={handleCreateJob} onReset={handleReset} buttonLabel={"+ Add Job"} />
         </div>
     )
 }
